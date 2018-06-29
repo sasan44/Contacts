@@ -30,8 +30,8 @@ public interface ApiService {
     Call<List<Contact>> getAll(
     );
 
-    @DELETE("{contact/{name}")
-    Call deleteContact(
+    @DELETE("contact/{name}")
+    Call<Contact> deleteContact(
             @Path("name") String name
     );
 

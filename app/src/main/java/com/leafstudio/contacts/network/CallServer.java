@@ -11,7 +11,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class CallServer {
+public class CallServer implements CALLS {
 
     ApiService apiService;
 
@@ -19,6 +19,7 @@ public class CallServer {
         this.apiService = apiService;
     }
 
+    @Override
     public void createContact(String name, String work, String number) {
         Call<Contact> call = apiService.createContact(name, work, number);
         call.enqueue(new Callback<Contact>() {
@@ -36,10 +37,12 @@ public class CallServer {
             public void onFailure(Call<Contact> call, Throwable t) {
                 Timber.d("onFailure" + call.toString());
                 t.printStackTrace();
+                listener.error("createContact");
             }
         });
     }
 
+    @Override
     public void getContact(String name) {
         Call<Contact> call = apiService.getContact(name);
         call.enqueue(new Callback<Contact>() {
@@ -56,10 +59,12 @@ public class CallServer {
             public void onFailure(Call<Contact> call, Throwable t) {
                 Timber.d("onFailure" + call.toString());
                 t.printStackTrace();
+                listener.error("getContact");
             }
         });
     }
 
+    @Override
     public void getAll() {
         Call<List<Contact>> call = apiService.getAll();
         call.enqueue(new Callback<List<Contact>>() {
@@ -74,21 +79,27 @@ public class CallServer {
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 Timber.d("onFailure" + call.toString());
                 t.printStackTrace();
+                listener.error("getAll");
             }
         });
     }
 
-    public void deleteContact(String name) {
+    @Override
+    public void deleteContact(final String name) {
         Call<Contact> call = apiService.deleteContact(name);
         call.enqueue(new Callback<Contact>() {
             @Override
             public void onResponse(Call<Contact> call, Response<Contact> response) {
-                Timber.d("onResponse" + new Gson().toJson(response.body()));
-
+                Timber.d("onResponse :" + new Gson().toJson(response.body()));
+                if (response != null)
+                    listener.contactDeleted(name);
+                else
+                    listener.error("deleteContact");
             }
 
             @Override
             public void onFailure(Call<Contact> call, Throwable t) {
+                listener.error("deleteContact");
                 Timber.d("onFailure" + call.toString());
                 t.printStackTrace();
             }
@@ -96,7 +107,7 @@ public class CallServer {
     }
 
     private void contactsLoaded(List<Contact> body) {
-        listener.contactsLoaded( body);
+        listener.contactsLoaded(body);
     }
 
     private void contactLoaded(Contact body) {
@@ -107,7 +118,8 @@ public class CallServer {
         listener.contactCreated(body);
     }
 
-    CallServerListener listener ;
+    CallServerListener listener;
+
     public void setListener(CallServerListener listener) {
         this.listener = listener;
     }

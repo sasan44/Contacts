@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface UIListener {
     void update(List<Contact> contacts);
+    void error(String string);
+    void notifyChange();
 }

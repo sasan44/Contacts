@@ -2,16 +2,19 @@ package com.leafstudio.contacts.Presenter;
 
 import com.leafstudio.contacts.Screens.UIListener;
 import com.leafstudio.contacts.model.Contact;
+import com.leafstudio.contacts.network.CALLS;
 import com.leafstudio.contacts.network.CallServer;
 
 import java.util.List;
 
 import timber.log.Timber;
 
-public class Presenter implements CallServerListener{
+public class Presenter implements CallServerListener, CALLS {
     List<Contact> contacts;
     CallServer callServer;
-    public Presenter(CallServer callServer ){
+    UIListener uiListener;
+
+    public Presenter(CallServer callServer) {
         Timber.d("Presenter");
         this.callServer = callServer;
         callServer.setListener(this);
@@ -23,8 +26,8 @@ public class Presenter implements CallServerListener{
     }
 
     @Override
-    public void contactDeleted(Contact contact) {
-
+    public void contactDeleted(String contact) {
+        uiListener.notifyChange();
     }
 
     @Override
@@ -42,8 +45,35 @@ public class Presenter implements CallServerListener{
 
     }
 
-    UIListener uiListener ;
+    @Override
+    public void error(String error) {
+        uiListener.error(error);
+    }
+
+
     public void setListener(UIListener listener) {
         this.uiListener = listener;
     }
+
+    @Override
+    public void createContact(String name, String work, String number) {
+        callServer.createContact(name, work, number);
+    }
+
+    @Override
+    public void getContact(String name) {
+
+    }
+
+    @Override
+    public void getAll() {
+        callServer.getAll();
+    }
+
+    @Override
+    public void deleteContact(String name) {
+        callServer.deleteContact(name);
+    }
+
+
 }

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Contacts</string>
+    <string name="work">Work:</string>
+    <string name="name">Name :</string>
+    <string name="createdAt">Created At:</string>
+    <string name="updatedAt">Updated At:</string>
 </resources>
